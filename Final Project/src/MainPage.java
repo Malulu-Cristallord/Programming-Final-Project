@@ -1,4 +1,4 @@
-import java.swing.*;
+import javax.swing.*;
 import java.awt.*;
 public class MainPage extends JFrame{
 

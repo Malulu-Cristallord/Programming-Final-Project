@@ -5,11 +5,11 @@ import java.awt.event.*;
 public class LoginPage extends JFrame {
 
     private User user = new User();
-    private HomeFrame homeFrame;
+	private MainPage mainPage;
     private JTextField tfUserName, tfPassword;
     private JButton btnEnroll, btnLogin;
 
-    public LoginFrame() {
+    public LoginPage() {
         createLayout();
         setTitle("Login");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -72,9 +72,8 @@ public class LoginPage extends JFrame {
         			user.checkPassword(tfUserName.getText(), tfPassword.getText());
         			loginSuccess();
         			dispose();
-        			homeFrame = new HomeFrame();
-        			homeFrame.setVisible(true);
-        			homeFrame.loginSuccess(tfUserName.getText());
+        			mainPage = new MainPage();
+        			mainPage.setVisible(true);
         			}catch(UserError ex){
         			error(3);
         		}catch(PasswordError ex) {
