@@ -2,9 +2,9 @@ import java.swing.*;
 import java.awt.*;
 public class MainPage extends JFrame{
 
-	JLabel label = new JLabel();
-	JLabel label2 = new JLabel();
-	JPanel helloPanel;
+	private JLabel label = new JLabel();
+	private JLabel label2 = new JLabel();
+	private JPanel helloPanel;
 
 	public MainPage(){
 		this.setTitle("Home");
