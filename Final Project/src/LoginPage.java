@@ -1,14 +1,17 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.*;
+import java.io.*;
 
-public class LoginPage extends JFrame {
+public class LoginPage extends JFrame implements Login{
 
-    private User user = new User();
+	private String fileName = "UserNames";
+	private Scanner sc = new Scanner(fileName);
 	private MainPage mainPage;
     private JTextField tfUserName, tfPassword;
     private JButton btnEnroll, btnLogin;
-
+    
     public LoginPage() {
         createLayout();
         setTitle("Login");
@@ -16,9 +19,21 @@ public class LoginPage extends JFrame {
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
+        fileCheck(fileName);
+        createFw();
+        
     }
 
-    private void createLayout() {
+    public void fileCheck(String fileName) {
+    	
+    }
+    public void createFw() {
+    	
+    	/*
+    	 * Needs to create an exception where file doesn't exist, and 
+    	 */
+    }
+    public void createLayout() {
         JPanel formPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         formPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
@@ -57,27 +72,19 @@ public class LoginPage extends JFrame {
         btnEnroll.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
         		try {
-        			user.add(tfUserName.getText(), tfPassword.getText());
-        		}catch(UserError ex){
-        			error(1);
-        		}catch(PasswordError ex) {
-        			error(2);
+        			checkU();
+        		}catch(Exception exc) {
+        			error(0);
         		}
         	}
         });
         btnLogin.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
         		try {
-        			user.checkUserExist(tfUserName.getText());
-        			user.checkPassword(tfUserName.getText(), tfPassword.getText());
-        			loginSuccess();
-        			dispose();
-        			mainPage = new MainPage();
-        			mainPage.setVisible(true);
-        			}catch(UserError ex){
-        			error(3);
-        		}catch(PasswordError ex) {
-        			error(4);
+        			//reads the file to check whether the user name exists
+        			//if yes, reads again to check the password
+        		}catch(Exception exc) {
+        			error(0);
         		}
         	}
         });
@@ -106,7 +113,25 @@ public class LoginPage extends JFrame {
     	successFrame.setVisible(true);
     	successFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
+    
+    public void enroll(String userName, String password) {
+    	try {
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+    }
+    
+    public void checkU() {
+    	//file writer checks if user name exists
+    }
+    
+    public void checkP() {
+    	
+    }
+    
     public void error(int errorCode) {
+
     	switch(errorCode) {
     	default:
     		JOptionPane.showMessageDialog(this, "<ERROR> Unknown error!", "ERROR!", JOptionPane.ERROR_MESSAGE);
@@ -115,7 +140,7 @@ public class LoginPage extends JFrame {
     		JOptionPane.showMessageDialog(this, "<ERROR#01> Username can't be empty!", "ERROR!", JOptionPane.ERROR_MESSAGE);
     		break;
     	case 2:
-    		JOptionPane.showMessageDialog(this, "<ERROR#02> Password should be exactly 8 letters long!", "ERROR!", JOptionPane.ERROR_MESSAGE);
+    		JOptionPane.showMessageDialog(this, "<ERROR#02> Password should be at least 8 letters long!", "ERROR!", JOptionPane.ERROR_MESSAGE);
     		break;
     	case 3:
     		JOptionPane.showMessageDialog(this, "<ERROR#03> Username not found!", "ERROR!", JOptionPane.ERROR_MESSAGE);
@@ -125,4 +150,35 @@ public class LoginPage extends JFrame {
     		break;
     	}
     }
+    
+    
+    
+    
 }
+
+class FileNotFoundError extends Exception {
+	public FileNotFoundError(String Error) {
+		super(Error);
+	}
+}
+class UsernameNotFoundError extends Exception{
+	public UsernameNotFoundError(String Error) {
+		super(Error);
+	}
+}
+class PasswordError extends Exception{
+	public PasswordError(String Error) {
+		super(Error);
+	}
+}
+class PasswordLengthError extends Exception{
+	public PasswordLengthError(String Error) {
+		super(Error);
+	}
+}
+class NullUsernameError extends Exception{
+	public NullUsernameError(String Error) {
+		super(Error);
+	}
+}
+

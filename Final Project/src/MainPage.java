@@ -4,7 +4,7 @@ public class MainPage extends JFrame{
 
 	private JLabel label = new JLabel();
 	private JLabel label2 = new JLabel();
-	private JPanel helloPanel;
+	private JPanel fullPanel;
 
 	public MainPage(){
 		this.setTitle("Home");
@@ -20,13 +20,13 @@ public class MainPage extends JFrame{
 		*/
 		label.setFont(new Font("TimesRoman", Font.PLAIN, 60));
 		label2.setFont(new Font("TimesRoman", Font.PLAIN, 25));
-		helloPanel = new JPanel();
-		helloPanel.add(label);
-		helloPanel.add(label2);
-		helloPanel.setPreferredSize(new Dimension(500, 100));
+		fullPanel = new JPanel();
+		fullPanel.add(label);
+		fullPanel.add(label2);
+		fullPanel.setPreferredSize(new Dimension(500, 100));
 		
 		this.setLayout(new BorderLayout(20, 60));
-		this.getContentPane().add(helloPanel, BorderLayout.CENTER);
+		this.getContentPane().add(fullPanel, BorderLayout.CENTER);
 		this.getContentPane().add(new JPanel(), BorderLayout.SOUTH);
 		this.getContentPane().add(new JPanel(), BorderLayout.NORTH);
 	}
