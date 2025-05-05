@@ -44,3 +44,6 @@ Before anyone change the program, make sure to fetch the latest version of the c
 
 other notes are TBA in future updates
 2025/05/04
+
+Note: This README file will no longer be updated. The notes from now on will be documented in the README file in the Final Project folder(README.md)
+2025/05/05
