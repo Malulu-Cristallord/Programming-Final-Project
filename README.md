@@ -1,4 +1,5 @@
 README
+2025/05/05
 
 *This Github page is made solely for my university project, Any unwanted access will be prohibited*
 
@@ -39,4 +40,10 @@ A folder that stores budget.
 Before anyone change the program, make sure to fetch the latest version of the code.
 
 other notes are TBA in future updates
-2025/05/05
+
+2025/05/06
+Finished Login page, users are now able to freely log in the system and delete save files.
+
+future updates:
+Add warnings for users who tapped on delete save file.
+Finish main page.
