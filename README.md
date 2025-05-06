@@ -29,18 +29,14 @@ The Calander Page reads from the save file in which records. Functions like the 
 
 2. System building
 
-We connect our sql database to the program, anytime a user registers, it creates a new data which includes the following variables:
-(1) Account Name / String
-(2) Account Password / String
-(3) Subjects / String
-(4) Budgets / Double
-(5) Logged in Days count / Int
-(6-1) Accounted subject / String
-(6-2) Accounted value / Double
+We don't connect our files to sql, instead we store a file within the app, then we read the file using filereader and JFileChooser
+The files should consist of UserID, Username, password, loggedin days.
+A folder that stores Accounted data and value.
+A folder that stores budget.
 
 3. Notes
 
 Before anyone change the program, make sure to fetch the latest version of the code.
 
 other notes are TBA in future updates
-2025/05/04
+2025/05/05
