@@ -6,9 +6,10 @@ import java.io.*;
 
 public class LoginPage extends JFrame implements Login{
 
-	private String fileName = "UserNames";
-	private MainPage mainPage;
-    private JTextField tfUserName, tfPassword;
+	private static final long serialVersionUID = 4334680347938578924L;
+	private String fileName = "UserNames.txt";
+    private JTextField tfUserName;
+    private JPasswordField tfPassword;
     private JButton btnEnroll, btnLogin, btnClearFile;
     
     public LoginPage() {
@@ -61,7 +62,7 @@ public class LoginPage extends JFrame implements Login{
         JLabel lblUsername = new JLabel("Username:");
         JLabel lblPassword = new JLabel("Password:");
         tfUserName = new JTextField(20);
-        tfPassword = new JTextField(20);
+        tfPassword = new JPasswordField(20);
 
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -97,7 +98,7 @@ public class LoginPage extends JFrame implements Login{
         		try {
         			checkU();
         			checkP();
-        			enroll(tfUserName.getText(), tfPassword.getText());
+        			enroll(tfUserName.getText(), String.valueOf(tfPassword.getPassword()));
         		}catch(Exception exc) {
         			error(0);
         		}
@@ -108,9 +109,10 @@ public class LoginPage extends JFrame implements Login{
         		try {
         			//reads the file to check whether the user name exists
         			//if yes, reads again to check the password
-        	    	Scanner sc = new Scanner(fileName);
+        	    	Scanner sc = new Scanner(new File(fileName));
         	        String inputU = tfUserName.getText().trim();
-        	        String inputP = tfPassword.getText().trim(); 
+        	        String inputP = String.valueOf(tfPassword.getPassword()); 
+        	        boolean userFound = false;
         	        try {
         	        	while(sc.hasNextLine()) {
         	        		String line = sc.nextLine();
@@ -119,8 +121,9 @@ public class LoginPage extends JFrame implements Login{
         	        			String storedU = parts[1];
         	        			String storedP = parts[2];
         	        			if(storedU.equals(inputU)) {
+    	        					userFound = true;
         	        				if(storedP.equals(inputP)) {
-        	        					loginSuccess();
+        	        					loginSuccess(inputU);
         	        					break;
         	        				}else {
         	        					error(4);
@@ -132,7 +135,12 @@ public class LoginPage extends JFrame implements Login{
         	        }finally {
         	        	sc.close();
         	        }  
+        	        
+        	        if(!userFound) {
+        	        	error(3);
+        	        }
         		}catch(Exception exc) {
+        			exc.printStackTrace();
         			error(0);
         		}
         	}
@@ -163,14 +171,11 @@ public class LoginPage extends JFrame implements Login{
         allPanel.setPreferredSize(new Dimension(500, 300));
         add(allPanel);
     }
-    public void loginSuccess(){
-    	JFrame successFrame = new JFrame();
-    	JLabel successLabel = new JLabel("Login success!");
-    	JPanel successPanel = new JPanel();
-    	successPanel.add(successLabel);
-    	successFrame.add(successPanel);
-    	successFrame.setVisible(true);
-    	successFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
+    public void loginSuccess(String name){
+    	dispose();
+        JOptionPane.showMessageDialog(this, "Login Successful!", "Success", JOptionPane.PLAIN_MESSAGE);
+        
+        new MainPage(name);
     }   
     public void enroll(String userName, String password) {
     	try {
@@ -214,14 +219,15 @@ public class LoginPage extends JFrame implements Login{
     		if(parts.length == 3) {
     			names.add(parts[1]);
     		}
-    		for(int i = 0; i < names.size(); i++) {
-    			if(tfUserName.getText().equals(names.get(i))) throw new RepeatUsernameError();
-    		}
+    		
     	}
+    	for(int i = 0; i < names.size(); i++) {
+			if(tfUserName.getText().equals(names.get(i))) throw new RepeatUsernameError();
+		}
     	sc.close();
     }
     public void checkP() throws PasswordLengthError{
-    	if(tfPassword.getText().length() < 8) throw new PasswordLengthError();
+    	if(String.valueOf(tfPassword.getPassword()).length() < 8) throw new PasswordLengthError();
     }
     public void error(int errorCode) {
 
