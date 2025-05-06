@@ -7,31 +7,51 @@ import java.io.*;
 public class LoginPage extends JFrame implements Login{
 
 	private String fileName = "UserNames";
-	private Scanner sc = new Scanner(fileName);
 	private MainPage mainPage;
     private JTextField tfUserName, tfPassword;
-    private JButton btnEnroll, btnLogin;
+    private JButton btnEnroll, btnLogin, btnClearFile;
     
     public LoginPage() {
+    	System.out.println("File path: " + new File(fileName).getAbsolutePath());
+    	
         createLayout();
-        setTitle("Login");
+        setTitle("Welcome to Mycrohard Accounting App");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
+        
         fileCheck(fileName);
-        createFw();
+        initializeScanner();
         
     }
 
     public void fileCheck(String fileName) {
-    	
+        File file = new File(fileName);
+        if (!file.exists()) {
+            try {
+                if (file.createNewFile()) {
+                    System.out.println("Save file not found. New file created.");
+                }
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(this,
+                        "<ERROR#00> Failed to create save file!",
+                        "File Error",
+                        JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+                System.exit(1);
+            }
+        } else {
+            System.out.println("Save file found.");
+        }
     }
-    public void createFw() {
-    	
-    	/*
-    	 * Needs to create an exception where file doesn't exist, and 
-    	 */
+    public void initializeScanner() {
+    	try {
+        	Scanner sc = new Scanner(new File(fileName));
+        	sc.close();
+    	}catch(FileNotFoundException e) {
+    		e.printStackTrace();
+    	}
     }
     public void createLayout() {
         JPanel formPanel = new JPanel(new GridBagLayout());
@@ -64,15 +84,20 @@ public class LoginPage extends JFrame implements Login{
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
         btnEnroll = new JButton("Enroll");
-        btnEnroll.setPreferredSize(new Dimension(100, 30));
+        btnEnroll.setPreferredSize(new Dimension(80, 30));
         btnLogin = new JButton("Login");
-        btnLogin.setPreferredSize(new Dimension(100, 30));
+        btnLogin.setPreferredSize(new Dimension(80, 30));
+        btnClearFile = new JButton("Clear file and exit");
+        btnClearFile.setPreferredSize(new Dimension(200, 30));
         buttonPanel.add(btnEnroll);
         buttonPanel.add(btnLogin);
+        buttonPanel.add(btnClearFile);
         btnEnroll.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
         		try {
         			checkU();
+        			checkP();
+        			enroll(tfUserName.getText(), tfPassword.getText());
         		}catch(Exception exc) {
         			error(0);
         		}
@@ -83,12 +108,46 @@ public class LoginPage extends JFrame implements Login{
         		try {
         			//reads the file to check whether the user name exists
         			//if yes, reads again to check the password
+        	    	Scanner sc = new Scanner(fileName);
+        	        String inputU = tfUserName.getText().trim();
+        	        String inputP = tfPassword.getText().trim(); 
+        	        try {
+        	        	while(sc.hasNextLine()) {
+        	        		String line = sc.nextLine();
+        	        		String[] parts = line.split("XXXX");
+        	        		if(parts.length == 3) {
+        	        			String storedU = parts[1];
+        	        			String storedP = parts[2];
+        	        			if(storedU.equals(inputU)) {
+        	        				if(storedP.equals(inputP)) {
+        	        					loginSuccess();
+        	        					break;
+        	        				}else {
+        	        					error(4);
+        	        					break;
+        	        				}
+        	        			}
+        	        		}
+        	        	}	
+        	        }finally {
+        	        	sc.close();
+        	        }  
         		}catch(Exception exc) {
         			error(0);
         		}
         	}
         });
-        
+        btnClearFile.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		try {
+        			File file = new File(fileName);
+        			file.delete();
+        			dispose();
+        		}catch(Exception ex) {
+        			error(0);
+        		}
+        	}
+        });
         
         //form panel
         gbc.gridx = 0;
@@ -112,24 +171,58 @@ public class LoginPage extends JFrame implements Login{
     	successFrame.add(successPanel);
     	successFrame.setVisible(true);
     	successFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
-    }
-    
+    }   
     public void enroll(String userName, String password) {
     	try {
-			
-		}catch (Exception e) {
+			checkU();
+			checkP();
+			int index = 0;
+	        File file = new File(fileName);
+	        if (file.exists()) {
+	            BufferedReader reader = new BufferedReader(new FileReader(file));
+	            while (reader.readLine() != null) {
+	                index++;
+	            }
+	            reader.close();
+	        }
+
+	        // Write new user
+	        BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true));
+	        writer.write(index + "XXXX" + userName + "XXXX" + password);
+	        writer.newLine();
+	        writer.close();
+
+	        JOptionPane.showMessageDialog(this, "Enrollment successful!");
+		}catch (NullUsernameError e) {
+			error(1);
+		}catch (PasswordLengthError e) {
+			error(2);
+		}catch (RepeatUsernameError e) {
+			error(5);
+		}catch(IOException e) {
+			error(0);
 			e.printStackTrace();
 		}
     }
-    
-    public void checkU() {
-    	//file writer checks if user name exists
+    public void checkU() throws NullUsernameError, RepeatUsernameError, FileNotFoundException{
+    	if(tfUserName.getText().equals(null)) throw new NullUsernameError();
+    	ArrayList<String> names = new ArrayList<>();
+    	Scanner sc = new Scanner(new File(fileName));
+    	while(sc.hasNextLine()) {
+    		String line = sc.nextLine();
+    		String[] parts = line.split("XXXX");
+    		if(parts.length == 3) {
+    			names.add(parts[1]);
+    		}
+    		for(int i = 0; i < names.size(); i++) {
+    			if(tfUserName.getText().equals(names.get(i))) throw new RepeatUsernameError();
+    		}
+    	}
+    	sc.close();
     }
-    
-    public void checkP() {
-    	
+    public void checkP() throws PasswordLengthError{
+    	if(tfPassword.getText().length() < 8) throw new PasswordLengthError();
     }
-    
     public void error(int errorCode) {
 
     	switch(errorCode) {
@@ -148,6 +241,12 @@ public class LoginPage extends JFrame implements Login{
     	case 4:
     		JOptionPane.showMessageDialog(this, "<ERROR#04> Incorrect password!", "ERROR!", JOptionPane.ERROR_MESSAGE);
     		break;
+    	case 5:
+    		JOptionPane.showMessageDialog(this, "<ERROR#05> Cannot enroll, username repeated!", "ERROR!", JOptionPane.ERROR_MESSAGE);
+    		break;
+    	case 6:
+    		JOptionPane.showMessageDialog(this, "<ERROR#06> File not found!\nPlease restart the program\nReinstall if needed.", "ERROR!", JOptionPane.ERROR_MESSAGE);
+    		break;
     	}
     }
     
@@ -157,28 +256,33 @@ public class LoginPage extends JFrame implements Login{
 }
 
 class FileNotFoundError extends Exception {
-	public FileNotFoundError(String Error) {
-		super(Error);
+	public FileNotFoundError() {
+	
 	}
 }
 class UsernameNotFoundError extends Exception{
-	public UsernameNotFoundError(String Error) {
-		super(Error);
+	public UsernameNotFoundError() {
+		
 	}
 }
 class PasswordError extends Exception{
-	public PasswordError(String Error) {
-		super(Error);
+	public PasswordError() {
+		
 	}
 }
 class PasswordLengthError extends Exception{
-	public PasswordLengthError(String Error) {
-		super(Error);
+	public PasswordLengthError() {
+		
 	}
 }
 class NullUsernameError extends Exception{
-	public NullUsernameError(String Error) {
-		super(Error);
+	public NullUsernameError() {
+		
+	}
+}
+class RepeatUsernameError extends Exception{
+	public RepeatUsernameError() {
+		
 	}
 }
 
