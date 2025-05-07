@@ -27,7 +27,7 @@ public class LoginPage extends JFrame implements Login{
         
     }
 
-    public void fileCheck(String fileName) {
+    private void fileCheck(String fileName) {
         File file = new File(fileName);
         if (!file.exists()) {
             try {
@@ -46,7 +46,7 @@ public class LoginPage extends JFrame implements Login{
             System.out.println("Save file found.");
         }
     }
-    public void initializeScanner() {
+    private void initializeScanner() {
     	try {
         	Scanner sc = new Scanner(new File(fileName));
         	sc.close();
@@ -54,7 +54,7 @@ public class LoginPage extends JFrame implements Login{
     		e.printStackTrace();
     	}
     }
-    public void createLayout() {
+    private void createLayout() {
         JPanel formPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         formPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
@@ -177,7 +177,7 @@ public class LoginPage extends JFrame implements Login{
         
         new MainPage(name);
     }   
-    public void enroll(String userName, String password) {
+    private void enroll(String userName, String password) {
     	try {
 			checkU();
 			checkP();
@@ -209,7 +209,7 @@ public class LoginPage extends JFrame implements Login{
 			e.printStackTrace();
 		}
     }
-    public void checkU() throws NullUsernameError, RepeatUsernameError, FileNotFoundException{
+    private void checkU() throws NullUsernameError, RepeatUsernameError, FileNotFoundException{
     	if(tfUserName.getText().equals(null)) throw new NullUsernameError();
     	ArrayList<String> names = new ArrayList<>();
     	Scanner sc = new Scanner(new File(fileName));
@@ -226,10 +226,10 @@ public class LoginPage extends JFrame implements Login{
 		}
     	sc.close();
     }
-    public void checkP() throws PasswordLengthError{
+    private void checkP() throws PasswordLengthError{
     	if(String.valueOf(tfPassword.getPassword()).length() < 8) throw new PasswordLengthError();
     }
-    public void error(int errorCode) {
+    private void error(int errorCode) {
 
     	switch(errorCode) {
     	default:
